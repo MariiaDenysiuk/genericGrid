@@ -135,6 +135,41 @@
           }
         }
       }
+    },
+    "md-greed": {
+      "root": "projects/md-greed",
+      "sourceRoot": "projects/md-greed/src",
+      "projectType": "library",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/md-greed/tsconfig.lib.json",
+            "project": "projects/md-greed/ng-package.json"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/md-greed/src/test.ts",
+            "tsConfig": "projects/md-greed/tsconfig.spec.json",
+            "karmaConfig": "projects/md-greed/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/md-greed/tsconfig.lib.json",
+              "projects/md-greed/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }
   },
   "defaultProject": "treeGreed"

@@ -17,6 +17,14 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "md-greed": [
+        "dist/md-greed"
+      ],
+      "md-greed/*": [
+        "dist/md-greed/*"
+      ]
+    }
   }
 }
