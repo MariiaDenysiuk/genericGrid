@@ -1,12 +1,15 @@
 import { NgModule } from '@angular/core';
 import { MdGreedComponent } from './md-greed.component';
-import { MatTableModule } from '@angular/material';
+import { MatInputModule, MatTableModule } from '@angular/material';
+import { MdContainerGreedComponent } from './md-container-greed.component';
+import { BrowserModule } from '@angular/platform-browser';
+import { InputOutlet, InputsTempComponent } from './inputs-temp/inputs-temp.component';
 
 @NgModule({
-  declarations: [MdGreedComponent],
+  declarations: [MdGreedComponent, MdContainerGreedComponent, InputsTempComponent, InputOutlet],
   imports: [
-    MatTableModule
+    MatTableModule, MatInputModule, BrowserModule
   ],
-  exports: [MdGreedComponent]
+  exports: [MdGreedComponent, InputOutlet]
 })
 export class MdGreedModule { }
