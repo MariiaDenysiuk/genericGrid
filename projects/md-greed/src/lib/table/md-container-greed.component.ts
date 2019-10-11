@@ -3,7 +3,7 @@ import { DataService } from '../services/data.service';
 import { PeriodicElement } from '../models/data.model';
 
 @Component({
-  selector: 'lib-md-container-greed',
+  selector: 'md-container-greed',
   templateUrl: './md-container-greed.component.html',
   styleUrls: ['./md-greed.component.sass'],
 })

@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { InputsTempComponent } from './inputs-temp.component';
+import { TableDataSourceComponent } from './table-data-source.component';
 
-describe('InputsTempComponent', () => {
-  let component: InputsTempComponent;
-  let fixture: ComponentFixture<InputsTempComponent>;
+describe('TableDataSourceComponent', () => {
+  let component: TableDataSourceComponent;
+  let fixture: ComponentFixture<TableDataSourceComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ InputsTempComponent ]
+      declarations: [ TableDataSourceComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(InputsTempComponent);
+    fixture = TestBed.createComponent(TableDataSourceComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
