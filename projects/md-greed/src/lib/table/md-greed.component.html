@@ -1,40 +1,37 @@
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-  <!-- Position Column -->
-  <ng-container matColumnDef="position">
-    <th mat-header-cell *matHeaderCellDef> No. </th>
-    <td mat-cell *matCellDef="let element"> {{element.position}} </td>
-  </ng-container>
+<!--<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">-->
+  <!--&lt;!&ndash; Position Column &ndash;&gt;-->
+  <!--<ng-container matColumnDef="position">-->
+    <!--<th mat-header-cell *matHeaderCellDef> No. </th>-->
+    <!--<td mat-cell *matCellDef="let element"> {{element.position}} </td>-->
+  <!--</ng-container>-->
 
-  <!-- Name Column -->
-  <ng-container matColumnDef="name">
-    <th mat-header-cell *matHeaderCellDef> Name </th>
-    <td mat-cell *matCellDef="let element"> {{element.name}} </td>
-  </ng-container>
+  <!--&lt;!&ndash; Name Column &ndash;&gt;-->
+  <!--<ng-container matColumnDef="name">-->
+    <!--<th mat-header-cell *matHeaderCellDef> Name </th>-->
+    <!--<td mat-cell *matCellDef="let element"> {{element.name}} </td>-->
+  <!--</ng-container>-->
 
-  <!-- Weight Column -->
-  <ng-container matColumnDef="weight">
-    <th mat-header-cell *matHeaderCellDef> Weight </th>
-    <td mat-cell *matCellDef="let element"> {{element.weight}} </td>
-  </ng-container>
+  <!--&lt;!&ndash; Weight Column &ndash;&gt;-->
+  <!--<ng-container matColumnDef="weight">-->
+    <!--<th mat-header-cell *matHeaderCellDef> Weight </th>-->
+    <!--<td mat-cell *matCellDef="let element"> {{element.weight}} </td>-->
+  <!--</ng-container>-->
 
-  <!-- Symbol Column -->
-  <ng-container matColumnDef="symbol">
-    <th mat-header-cell *matHeaderCellDef> Symbol </th>
-    <td mat-cell *matCellDef="let element" (click)="openEditMode($event)">
-      <ng-container lib-inputs-temp="{{element.symbol}}"></ng-container>
-    </td>
-  </ng-container>
+  <!--&lt;!&ndash; Symbol Column &ndash;&gt;-->
+  <!--<ng-container matColumnDef="symbol">-->
+    <!--<th mat-header-cell *matHeaderCellDef> Symbol </th>-->
+    <!--<td mat-cell *matCellDef="let element" (click)="openEditMode($event)">-->
+      <!--&lt;!&ndash;<ng-container lib-inputs-temp="{{element.symbol}}"></ng-container>&ndash;&gt;-->
+    <!--</td>-->
+  <!--</ng-container>-->
 
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <!--<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>-->
 
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  <!--<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>-->
 
 
+<!--</table>-->
+
+<table md-table>
+  <tr md-row *mdRowDef="let row; columns: displayedColumns; columns1: displayedColumns;"></tr>
 </table>
-
-<table md-table [dataSource]="dataSource">
-    <caption>ggg</caption>
-
-</table>
-
-

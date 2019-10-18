@@ -1,17 +1,16 @@
 import { NgModule } from '@angular/core';
 import { MdGreedComponent } from './md-greed.component';
 import { MatInputModule, MatTableModule } from '@angular/material';
-import { MdContainerGreedComponent } from './md-container-greed.component';
 import { BrowserModule } from '@angular/platform-browser';
-import { MdTableComponent } from './table/table.component';
-import { RowsComponent } from './rows/rows.component';
-import { MdTableDataSource } from './table-data-source/table-data-source.component';
+import { DataRowOutletDirective, MdTableComponent } from './table/table.component';
+import { MdFooterRowDef, MdHeaderRow, MdHeaderRowDef, MdRow, MdRowDef } from './rows/rows.component';
 
 @NgModule({
-  declarations: [MdGreedComponent, MdContainerGreedComponent, MdTableComponent, RowsComponent, MdTableDataSource],
+  declarations: [MdGreedComponent, MdTableComponent, MdRow,
+    MdRowDef, MdFooterRowDef, MdHeaderRowDef, MdHeaderRow, DataRowOutletDirective],
   imports: [
-    MatTableModule, MatInputModule, BrowserModule
+    MatTableModule, MatInputModule, BrowserModule,
   ],
-  exports: [MdGreedComponent, MdTableComponent],
+  exports: [MdGreedComponent, MdTableComponent, MdRow, MdRowDef, MdFooterRowDef, MdHeaderRowDef, MdHeaderRow, DataRowOutletDirective],
 })
 export class MdGreedModule { }
