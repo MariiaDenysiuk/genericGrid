@@ -59,11 +59,9 @@ export class MdFooterRowDef extends CdkFooterRowDef {
 export class MdHeaderRow extends CdkHeaderRow {
 }
 
-
-
 @Directive({
   selector: '[mdRowDef]',
-  inputs: ['columns: mdRowDefColumns', 'columns1: mdRowDefColumns1', 'when: mdRowDefWhen'],
+  inputs: ['columns: mdRowDefColumns', 'when: mdRowDefWhen'],
 })
 export class MdRowDef<T> implements OnChanges {
   constructor(private container: ViewContainerRef,
@@ -71,16 +69,12 @@ export class MdRowDef<T> implements OnChanges {
   ) { }
 
   columns: Iterable<string>;
-  columns1: Iterable<string>;
   when: (index: number, rowData: T) => boolean;
 
-  @Input() set mdRowDef(condition: boolean) {
-    console.log();
-  }
+  @Input() set mdRowDef(condition: boolean) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     console.log(this.columns);
-    console.log(this.columns1);
   }
 }
 

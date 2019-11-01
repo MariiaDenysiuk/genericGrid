@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 import { MdGreedComponent } from './md-greed.component';
 import { MatInputModule, MatTableModule } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
-import { DataRowOutletDirective, MdTableComponent } from './table/table.component';
-import { MdFooterRowDef, MdHeaderRow, MdHeaderRowDef, MdRow, MdRowDef } from './rows/rows.component';
+import { DataRowOutletDirective, MdTableComponent } from './table.component';
+import { MdFooterRowDef, MdHeaderRow, MdHeaderRowDef, MdRow, MdRowDef } from './rows.component';
 
 @NgModule({
   declarations: [MdGreedComponent, MdTableComponent, MdRow,
