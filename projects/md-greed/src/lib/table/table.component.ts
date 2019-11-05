@@ -153,7 +153,6 @@ export class MdTableComponent<T>  implements OnInit, AfterContentChecked {
       this._data = data || [];
       this.renderRows();
     });
-    this.renderRows();
   }
 
 
@@ -180,10 +179,7 @@ export class MdTableComponent<T>  implements OnInit, AfterContentChecked {
           }
         });
 
-
       console.log(viewContainer);
-
-
   }
 
   /**

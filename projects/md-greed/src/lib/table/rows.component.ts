@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   Directive,
-  Input, OnChanges,
+  Input, OnChanges, OnDestroy,
   OnInit, SimpleChanges,
   TemplateRef,
   ViewContainerRef,
@@ -79,10 +79,41 @@ export class MdRowDef<T> implements OnChanges {
 }
 
 
+@Directive({selector: '[mdCellOutlet]'})
+export class MdCellOutletDirective implements OnDestroy {
+  /** The ordered list of cells to render within this outlet's view container */
+  // cells: CdkCellDef[];
+
+  /** The data context to be provided to each cell */
+  context: any;
+
+  /**
+   * Static property containing the latest constructed instance of this class.
+   * Used by the CDK table when each CdkHeaderRow and CdkRow component is created using
+   * createEmbeddedView. After one of these components are created, this property will provide
+   * a handle to provide that component's cells and context. After init, the CdkCellOutlet will
+   * construct the cells with the provided context.
+   */
+  static mostRecentCellOutlet: MdCellOutletDirective|null = null;
+
+  constructor(public _viewContainer: ViewContainerRef) {
+    MdCellOutletDirective.mostRecentCellOutlet = this;
+  }
+
+  ngOnDestroy() {
+    // If this was the last outlet being rendered in the view, remove the reference
+    // from the static property after it has been destroyed to avoid leaking memory.
+    if (MdCellOutletDirective.mostRecentCellOutlet === this) {
+      MdCellOutletDirective.mostRecentCellOutlet = null;
+    }
+  }
+}
+
+
 /** Data row template container that contains the cell outlet. Adds the right class and role. */
 @Component({
   selector: 'md-row, tr[md-row]',
-  template: CDK_ROW_TEMPLATE,
+  template: `<ng-container mdCellOutlet></ng-container>`,
   host: {
     'class': 'md-row',
     'role': 'row',

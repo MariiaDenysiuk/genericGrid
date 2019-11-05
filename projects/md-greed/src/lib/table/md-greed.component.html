@@ -33,6 +33,13 @@
 <!--</table>-->
 
 <table md-table [dataSource]="dataSource">
+
+  <ng-container matColumnDef="weight">
+    <!--<th mat-header-cell *matHeaderCellDef> Weight </th>-->
+    <td mat-cell *mdCellDef="let element"> {{element.weight}} </td>
+  </ng-container>
+
+
   <tr md-row *mdRowDef="let row; columns: displayedColumns;"></tr>
 </table>
 
