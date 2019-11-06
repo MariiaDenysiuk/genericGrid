@@ -10,25 +10,31 @@ import {
   IterableDiffer,
   IterableDiffers,
   OnInit,
-  QueryList,
+  QueryList, TemplateRef,
   TrackByFunction,
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import {MdRowDef} from './rows.component';
+import {BaseRowDef, MdCellOutletDirective, MdRowDef} from './rows.component';
 import {
-  BaseRowDef,
   CdkCellOutletMultiRowContext,
   CdkCellOutletRowContext,
-  RenderRow,
   RowOutlet
 } from '@angular/cdk/table';
-import {Observable, of, Subscription} from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
+import { MdColumnDefDirective } from './cells.component';
+// import {getTableUnknownColumnError} from "@angular/cdk/typings/table/table-errors";
 
 abstract class RowViewRef<T> extends EmbeddedViewRef<RowContext<T>> {}
 
 export interface RowContext<T> extends CdkCellOutletMultiRowContext<T>,
   CdkCellOutletRowContext<T> {}
+
+export interface RenderRow<T> {
+  data: T;
+  dataIndex: number;
+  rowDef: MdRowDef<T>;
+}
 
 /**
  * Provides a handle for the table to grab the view container's ng-container to insert data rows.
@@ -91,6 +97,8 @@ export class MdTableComponent<T>  implements OnInit, AfterContentChecked {
 
   /** Differ used to find the changes in the data provided by the data source. */
   private _dataDiffer: IterableDiffer<RenderRow<T>>;
+
+  private _columnDefsByName = new Map<string, MdColumnDefDirective>();
 
   protected stickyCssClass = 'md-table-sticky';
   /** Set of data row definitions that were provided to the table as content children. */
@@ -273,13 +281,29 @@ export class MdTableComponent<T>  implements OnInit, AfterContentChecked {
     console.log(rowDef.template);
     outlet.viewContainer.createEmbeddedView(rowDef.template, context, index);
 
-    // for (let cellTemplate of this._getCellTemplates(rowDef)) {
-    //   if (CdkCellOutlet.mostRecentCellOutlet) {
-    //     CdkCellOutlet.mostRecentCellOutlet._viewContainer.createEmbeddedView(cellTemplate, context);
-    //   }
-    // }
-    //
+    for (const cellTemplate of this._getCellTemplates(rowDef)) {
+      if (MdCellOutletDirective.mostRecentCellOutlet) {
+        MdCellOutletDirective.mostRecentCellOutlet._viewContainer.createEmbeddedView(cellTemplate, context);
+      }
+    }
+
     // this._changeDetectorRef.markForCheck();
+  }
+
+  /** Gets the column definitions for the provided row def. */
+  private _getCellTemplates(rowDef: BaseRowDef): TemplateRef<any>[] {
+    if (!rowDef || !rowDef.columns) {
+      return [];
+    }
+    return Array.from(rowDef.columns, columnId => {
+      const column = this._columnDefsByName.get(columnId);
+
+      // if (!column) {
+      //   throw getTableUnknownColumnError(columnId);
+      // }
+
+      return rowDef.extractCellTemplate(column);
+    });
   }
 
 

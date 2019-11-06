@@ -2,37 +2,37 @@ import {
   ChangeDetectionStrategy,
   Component,
   Directive,
-  Input, OnChanges, OnDestroy,
-  OnInit, SimpleChanges,
+  Input, IterableChanges, IterableDiffer, IterableDiffers, OnChanges, OnDestroy,
+  SimpleChanges,
   TemplateRef,
   ViewContainerRef,
   ViewEncapsulation
 } from '@angular/core';
-import {CDK_ROW_TEMPLATE, CdkFooterRowDef, CdkHeaderRow, CdkHeaderRowDef, CdkRow, CdkRowDef} from '@angular/cdk/table';
+import { MdCellDefDirective, MdColumnDefDirective } from './cells.component';
 /* tslint:disable */
 /**
  * Header row definition for the mat-table.
  * Captures the header row's template and other header properties such as the columns to display.
  */
-@Directive({
-  selector: '[mdHeaderRowDef]',
-  providers: [{provide: CdkHeaderRowDef, useExisting: MdHeaderRowDef}],
-  inputs: ['columns: mdHeaderRowDef', 'sticky: mdHeaderRowDefSticky'],
-})
-export class MdHeaderRowDef extends CdkHeaderRowDef {
-}
+// @Directive({
+//   selector: '[mdHeaderRowDef]',
+//   providers: [{provide: CdkHeaderRowDef, useExisting: MdHeaderRowDef}],
+//   inputs: ['columns: mdHeaderRowDef', 'sticky: mdHeaderRowDefSticky'],
+// })
+// export class MdHeaderRowDef extends CdkHeaderRowDef {
+// }
 
 /**
  * Footer row definition for the mat-table.
  * Captures the footer row's template and other footer properties such as the columns to display.
  */
-@Directive({
-  selector: '[mdFooterRowDef]',
-  providers: [{provide: CdkFooterRowDef, useExisting: MdFooterRowDef}],
-  inputs: ['columns: matFooterRowDef', 'sticky: matFooterRowDefSticky'],
-})
-export class MdFooterRowDef extends CdkFooterRowDef {
-}
+// @Directive({
+//   selector: '[mdFooterRowDef]',
+//   providers: [{provide: CdkFooterRowDef, useExisting: MdFooterRowDef}],
+//   inputs: ['columns: matFooterRowDef', 'sticky: matFooterRowDefSticky'],
+// })
+// export class MdFooterRowDef extends CdkFooterRowDef {
+// }
 
 /**
  * Data row definition for the mat-table.
@@ -42,31 +42,81 @@ export class MdFooterRowDef extends CdkFooterRowDef {
 
 
 /** Footer template container that contains the cell outlet. Adds the right class and role. */
-@Component({
-  selector: 'md-header-row, tr[md-header-row]',
-  template: CDK_ROW_TEMPLATE,
-  host: {
-    'class': 'md-header-row',
-    'role': 'row',
-  },
-  // See note on CdkTable for explanation on why this uses the default change detection strategy.
-  // tslint:disable-next-line:validate-decorators
-  changeDetection: ChangeDetectionStrategy.Default,
-  encapsulation: ViewEncapsulation.None,
-  exportAs: 'mdHeaderRow',
-  providers: [{provide: CdkHeaderRow, useExisting: MdHeaderRow}],
-})
-export class MdHeaderRow extends CdkHeaderRow {
+// @Component({
+//   selector: 'md-header-row, tr[md-header-row]',
+//   template: CDK_ROW_TEMPLATE,
+//   host: {
+//     'class': 'md-header-row',
+//     'role': 'row',
+//   },
+//   // See note on CdkTable for explanation on why this uses the default change detection strategy.
+//   // tslint:disable-next-line:validate-decorators
+//   changeDetection: ChangeDetectionStrategy.Default,
+//   encapsulation: ViewEncapsulation.None,
+//   exportAs: 'mdHeaderRow',
+//   providers: [{provide: CdkHeaderRow, useExisting: MdHeaderRow}],
+// })
+// export class MdHeaderRow extends CdkHeaderRow {
+// }
+
+
+
+/**
+ * Base class for the CdkHeaderRowDef and CdkRowDef that handles checking their columns inputs
+ * for changes and notifying the table.
+ */
+export abstract class BaseRowDef implements OnChanges {
+  /** The columns to be displayed on this row. */
+  columns: Iterable<string>;
+
+  /** Differ used to check if any changes were made to the columns. */
+  protected _columnsDiffer: IterableDiffer<any>;
+
+  constructor(
+    /** @docs-private */ public template: TemplateRef<any>, protected _differs: IterableDiffers) {
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // Create a new columns differ if one does not yet exist. Initialize it based on initial value
+    // of the columns property or an empty array if none is provided.
+    if (!this._columnsDiffer) {
+      const columns = (changes['columns'] && changes['columns'].currentValue) || [];
+      this._columnsDiffer = this._differs.find(columns).create();
+      this._columnsDiffer.diff(columns);
+    }
+  }
+
+  /**
+   * Returns the difference between the current columns and the columns from the last diff, or null
+   * if there is no difference.
+   */
+  getColumnsDiff(): IterableChanges<any>|null {
+    return this._columnsDiffer.diff(this.columns);
+  }
+
+  /** Gets this row def's relevant cell template from the provided column def. */
+  extractCellTemplate(column: MdColumnDefDirective): TemplateRef<any> {
+    // if (this instanceof CdkHeaderRowDef) {
+    //   // return column.headerCell.template;
+    // }
+    // if (this instanceof CdkFooterRowDef) {
+    //   // return column.footerCell.template;
+    // } else {
+      return column.cell.template;
+    // }
+  }
 }
 
+
+// cdk row definitions-----------------------------------------------------
 @Directive({
   selector: '[mdRowDef]',
   inputs: ['columns: mdRowDefColumns', 'when: mdRowDefWhen'],
 })
-export class MdRowDef<T> implements OnChanges {
-  constructor(private container: ViewContainerRef,
-              private template: TemplateRef<any>,
-  ) { }
+export class MdRowDef<T> extends BaseRowDef  {
+  constructor(template: TemplateRef<any>, _differs: IterableDiffers) {
+    super(template, _differs);
+  }
 
   columns: Iterable<string>;
   when: (index: number, rowData: T) => boolean;
@@ -78,11 +128,11 @@ export class MdRowDef<T> implements OnChanges {
   }
 }
 
-
+// directive for outer
 @Directive({selector: '[mdCellOutlet]'})
 export class MdCellOutletDirective implements OnDestroy {
   /** The ordered list of cells to render within this outlet's view container */
-  // cells: CdkCellDef[];
+  cells: MdCellDefDirective[];
 
   /** The data context to be provided to each cell */
   context: any;

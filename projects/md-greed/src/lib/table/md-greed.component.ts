@@ -4,22 +4,14 @@ import {
   Component,
   ElementRef,
   OnInit,
-  TemplateRef,
-  ViewChild,
-  ViewContainerRef
 } from '@angular/core';
 import { DataService } from '../services/data.service';
-import { PeriodicElement } from '../models/data.model';
 
 @Component({
   selector: 'md-greed',
   templateUrl: './md-greed.component.html',
 })
 export class MdGreedComponent implements OnInit, AfterContentInit, AfterViewInit {
-  // @ViewChild('rr', {read: ElementRef, static: false }) tref: ElementRef;
-  // @ViewChild('vc', {read: ViewContainerRef, static: false }) vc: ViewContainerRef;
-  // @ViewChild('temp', {read: TemplateRef, static: false }) temp: TemplateRef<any>;
-
 
   displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
 
@@ -45,16 +37,7 @@ export class MdGreedComponent implements OnInit, AfterContentInit, AfterViewInit
     console.log(this.el.nativeElement.outerHTML);
   }
 
-  ngAfterViewInit(): void {
-    // outputs `I am span`
-    // console.log('begin');
-    // console.log(this.tref);
-    // console.log(this.vc);
-    // console.log(this.temp);
-  }
+  ngAfterViewInit(): void {}
 
-  ngAfterContentInit() {
-    // this.footer now points to the instance of `FooterComponent`
-    // console.log(this.footer);
-  }
+  ngAfterContentInit() {}
 }

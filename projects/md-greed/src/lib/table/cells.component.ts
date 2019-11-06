@@ -14,17 +14,21 @@ export interface CellDef {
  */
 @Directive({selector: '[mdCellDef]'})
 export class MdCellDefDirective implements CellDef {
-  constructor(public template: TemplateRef<any>) {}
+  constructor(public template: TemplateRef<any>) {
+
+  }
 }
+
 
 @Directive({
   selector: '[mdColumnDef]',
   /* tslint:disable */
   inputs: ['sticky'],
   /* tslint:enable */
-  providers: [{provide: 'MAT_SORT_HEADER_COLUMN_DEF', useExisting: MdColumnDefDirective}],
+  // providers: [{provide: 'MAT_SORT_HEADER_COLUMN_DEF', useExisting: MdColumnDefDirective}],
 })
 export class MdColumnDefDirective  {
+  _name: string;
   /** Unique name for this column. */
   @Input('mdColumnDef')
   get name(): string {
@@ -40,7 +44,7 @@ export class MdColumnDefDirective  {
     this._name = name;
     this.cssClassFriendlyName = name.replace(/[^a-z0-9_-]/ig, '-');
   }
-  _name: string;
+
 
   /**
    * Whether this column should be sticky positioned on the end of the row. Should make sure
