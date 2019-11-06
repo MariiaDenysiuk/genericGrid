@@ -1,5 +1,5 @@
 import {
-  AfterContentChecked,
+  AfterContentChecked, ChangeDetectorRef,
   Component,
   ContentChildren,
   Directive,
@@ -21,8 +21,10 @@ import {
   CdkCellOutletRowContext,
   RowOutlet
 } from '@angular/cdk/table';
+
 import { Observable, of, Subscription } from 'rxjs';
 import { MdColumnDefDirective } from './cells.component';
+import {getTableUnknownColumnError} from "@angular/cdk/typings/table/table-errors";
 // import {getTableUnknownColumnError} from "@angular/cdk/typings/table/table-errors";
 
 abstract class RowViewRef<T> extends EmbeddedViewRef<RowContext<T>> {}
@@ -45,11 +47,12 @@ export class DataRowOutletDirective {
   constructor(public viewContainer: ViewContainerRef, public elementRef: ElementRef) {}
 }
 
+
 @Component({
   selector: 'md-table, table[md-table]',
   template: `<ng-content select="caption"></ng-content>
              <ng-container headerRowOutlet></ng-container>
-             <ng-container mdRowOutlet><span>span component</span></ng-container>
+             <ng-container mdRowOutlet></ng-container>
              <ng-container footerRowOutlet></ng-container>`,
   /* tslint:disable */
   host: {
@@ -80,6 +83,8 @@ export class MdTableComponent<T>  implements OnInit, AfterContentChecked {
   /** List of the rendered rows as identified by their `RenderRow` object. */
   private _renderRows: RenderRow<T>[];
 
+  @ContentChildren(MdColumnDefDirective, {descendants: true}) _contentColumnDefs: QueryList<MdColumnDefDirective>;
+
   /**
    * Cache of the latest rendered `RenderRow` objects as a map for easy retrieval when constructing
    * a new list of `RenderRow` objects for rendering rows. Since the new list is constructed with
@@ -99,6 +104,9 @@ export class MdTableComponent<T>  implements OnInit, AfterContentChecked {
   private _dataDiffer: IterableDiffer<RenderRow<T>>;
 
   private _columnDefsByName = new Map<string, MdColumnDefDirective>();
+
+
+  private _customColumnDefs = new Set<MdColumnDefDirective>();
 
   protected stickyCssClass = 'md-table-sticky';
   /** Set of data row definitions that were provided to the table as content children. */
@@ -122,7 +130,7 @@ export class MdTableComponent<T>  implements OnInit, AfterContentChecked {
   }
   private _trackByFn: TrackByFunction<T>;
 
-  constructor(  protected readonly _differs: IterableDiffers) {}
+  constructor(  protected readonly _differs: IterableDiffers,  protected readonly _changeDetectorRef: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this._dataDiffer = this._differs.find([]).create((_i: number, dataRow: RenderRow<T>) => {
@@ -133,6 +141,7 @@ export class MdTableComponent<T>  implements OnInit, AfterContentChecked {
   ngAfterContentChecked(): void {
     // Cache the row and column definitions gathered by ContentChildren and programmatic injection.
     this._cacheRowDefs();
+    this._cacheColumnDefs();
 
     if (this.dataSource && this._rowDefs.length > 0 && !this._renderChangeSubscription) {
       this._observeRenderChanges();
@@ -143,6 +152,21 @@ export class MdTableComponent<T>  implements OnInit, AfterContentChecked {
   _cacheRowDefs() {
     this._rowDefs = mergeQueryListAndSet(this._contentRowDefs, this._customRowDefs);
   }
+
+  /** Update the list of all available row definitions that can be used. */
+  private _cacheColumnDefs() {
+    this._columnDefsByName.clear();
+
+    const columnDefs = mergeQueryListAndSet(this._contentColumnDefs, this._customColumnDefs);
+    columnDefs.forEach(columnDef => {
+
+      if (this._columnDefsByName.has(columnDef.name)) {
+        // throw getTableDuplicateColumnNameError(columnDef.name);
+      }
+      this._columnDefsByName.set(columnDef.name, columnDef);
+    });
+  }
+
 
   /** Set up a subscription for the data provided by the data source. */
   _observeRenderChanges() {
@@ -167,7 +191,6 @@ export class MdTableComponent<T>  implements OnInit, AfterContentChecked {
   renderRows() {
       this._renderRows = this._getAllRenderRows();
       const changes = this._dataDiffer.diff(this._renderRows);
-      console.log(changes);
 
       if (!changes) {
         return;
@@ -187,7 +210,6 @@ export class MdTableComponent<T>  implements OnInit, AfterContentChecked {
           }
         });
 
-      console.log(viewContainer);
   }
 
   /**
@@ -206,8 +228,6 @@ export class MdTableComponent<T>  implements OnInit, AfterContentChecked {
 
     const prevCachedRenderRows = this._cachedRenderRowsMap;
     this._cachedRenderRowsMap = new Map();
-
-    console.log( this._cachedRenderRowsMap);
 
 
     for (let i = 0; i < this._data.length; i++) {
@@ -230,8 +250,6 @@ export class MdTableComponent<T>  implements OnInit, AfterContentChecked {
         renderRows.push(renderRow);
       }
     }
-
-    console.log(renderRows);
     return renderRows;
   }
 
@@ -278,7 +296,7 @@ export class MdTableComponent<T>  implements OnInit, AfterContentChecked {
   private _renderRow(
     outlet: RowOutlet, rowDef: BaseRowDef, index: number, context: RowContext<T> = {}) {
     // TODO(andrewseguin): enforce that one outlet was instantiated from createEmbeddedView
-    console.log(rowDef.template);
+
     outlet.viewContainer.createEmbeddedView(rowDef.template, context, index);
 
     for (const cellTemplate of this._getCellTemplates(rowDef)) {
@@ -287,7 +305,7 @@ export class MdTableComponent<T>  implements OnInit, AfterContentChecked {
       }
     }
 
-    // this._changeDetectorRef.markForCheck();
+    this._changeDetectorRef.markForCheck();
   }
 
   /** Gets the column definitions for the provided row def. */
@@ -297,10 +315,9 @@ export class MdTableComponent<T>  implements OnInit, AfterContentChecked {
     }
     return Array.from(rowDef.columns, columnId => {
       const column = this._columnDefsByName.get(columnId);
-
-      // if (!column) {
-      //   throw getTableUnknownColumnError(columnId);
-      // }
+      if (!column) {
+      //  todo==================
+      }
 
       return rowDef.extractCellTemplate(column);
     });

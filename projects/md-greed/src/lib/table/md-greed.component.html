@@ -34,12 +34,28 @@
 
 <table md-table [dataSource]="dataSource">
 
+  <ng-container mdColumnDef="position">
+    <!--<th mat-header-cell *matHeaderCellDef> Weight </th>-->
+    <td  *mdCellDef="let element"> {{element.position}} </td>
+  </ng-container>
+
   <ng-container mdColumnDef="weight">
     <!--<th mat-header-cell *matHeaderCellDef> Weight </th>-->
-    <td mat-cell *mdCellDef="let element"> {{element.weight}} </td>
+    <td  *mdCellDef="let element"> {{element.weight}} </td>
+  </ng-container>
+
+  <ng-container mdColumnDef="name">
+    <!--<th mat-header-cell *matHeaderCellDef> Weight </th>-->
+    <td  *mdCellDef="let element"> {{element.name}} </td>
+  </ng-container>
+
+  <ng-container mdColumnDef="symbol">
+    <!--<th mat-header-cell *matHeaderCellDef> Weight </th>-->
+    <td  *mdCellDef="let element"> {{element.symbol}} </td>
   </ng-container>
 
 
   <tr md-row *mdRowDef="let row; columns: displayedColumns;"></tr>
+
 </table>
 

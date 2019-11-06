@@ -102,6 +102,7 @@ export abstract class BaseRowDef implements OnChanges {
     // if (this instanceof CdkFooterRowDef) {
     //   // return column.footerCell.template;
     // } else {
+      console.log(column.cell.template);
       return column.cell.template;
     // }
   }
@@ -148,6 +149,7 @@ export class MdCellOutletDirective implements OnDestroy {
 
   constructor(public _viewContainer: ViewContainerRef) {
     MdCellOutletDirective.mostRecentCellOutlet = this;
+
   }
 
   ngOnDestroy() {
@@ -172,7 +174,7 @@ export class MdCellOutletDirective implements OnDestroy {
   // tslint:disable-next-line:validate-decorators
   changeDetection: ChangeDetectionStrategy.Default,
   encapsulation: ViewEncapsulation.None,
-  exportAs: 'mdRow',
+  // exportAs: 'mdRow',
   // providers: [{provide: CdkRow, useExisting: MdRow}],
 })
 export class MdRow  {
